@@ -1,0 +1,38 @@
+{
+  "name": "@maharudra/create-agentic-ai-infra",
+  "version": "0.1.0",
+  "description": "Generator CLI for MahaRudra Agentic AI Infra.",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "create-agentic-ai-infra": "./dist/cli.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "cli": "node dist/cli.js",
+    "test": "vitest run --passWithNoTests",
+    "lint": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@maharudra/agentic-ai-infra-core": "workspace:*"
+  },
+  "devDependencies": {
+    "@maharudra/agentic-ai-infra-test-utils": "workspace:*"
+  }
+}

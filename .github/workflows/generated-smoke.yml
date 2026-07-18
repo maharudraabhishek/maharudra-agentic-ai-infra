@@ -1,0 +1,76 @@
+# Generated-project smoke matrix
+#
+# Focused workflow that builds the generator and runs only the generated-project
+# smoke tests. These tests exercise the real `init`, `validate`, and `doctor`
+# entry points against per-test temp directories and assert that scaffold
+# safety, append-only `.gitignore`, dashboard/Docker selection, and remote-safe
+# generation behave as documented.
+#
+# Why a separate workflow:
+#   - Provides a single signal that the user-facing generator surface is healthy.
+#   - Lets maintainers re-run only the smoke matrix from the Actions UI without
+#     paying for the full workspace CI matrix.
+#   - Keeps the workspace-checks job small enough to remain fast on every PR.
+#
+# Safety boundaries:
+#   - Smoke tests write only to OS temp directories.
+#   - Workflow never publishes, never starts Docker, never runs migrations.
+name: generated-smoke
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "packages/create-agentic-ai-infra/**"
+      - "packages/agentic-ai-infra-test-utils/**"
+      - "templates/**"
+      - ".github/workflows/generated-smoke.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "packages/create-agentic-ai-infra/**"
+      - "packages/agentic-ai-infra-test-utils/**"
+      - "templates/**"
+      - ".github/workflows/generated-smoke.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    name: generated-project smoke matrix
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.33.0
+          run_install: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies (frozen lockfile)
+        run: pnpm install --frozen-lockfile
+
+      - name: Build core, runtime, dashboard, and test-utils
+        run: |
+          pnpm --filter @maharudra/agentic-ai-infra-core run build
+          pnpm --filter @maharudra/agentic-ai-infra-runtime run build
+          pnpm --filter @maharudra/agentic-ai-infra-dashboard run build
+          pnpm --filter @maharudra/agentic-ai-infra-test-utils run build
+
+      - name: Build generator
+        run: pnpm --filter @maharudra/create-agentic-ai-infra run build
+
+      - name: Run generated-project smoke matrix
+        run: pnpm --filter @maharudra/create-agentic-ai-infra run test -- generated-project-smoke

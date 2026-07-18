@@ -1,0 +1,24 @@
+MahaRudra Agentic AI Infra
+Copyright (c) 2026 MahaRudra Agentic AI Infra contributors.
+
+UNLICENSED — All Rights Reserved.
+
+This repository and every package inside it are currently UNLICENSED. No open-
+source license is granted, and no copy, use, modification, redistribution, or
+publication right is conveyed by the presence of this repository.
+
+Specifically:
+
+  1. All packages declare "private": true and are not published to any package
+     registry.
+  2. No automated workflow in this repository publishes packages, even when
+     manually triggered. The release-readiness workflow runs dry-run pack and
+     metadata checks only.
+  3. The framework code, generated user-project templates, generator CLI,
+     runtime, dashboard, test utilities, and all documentation remain the
+     proprietary work of the MahaRudra Agentic AI Infra contributors.
+
+If, in the future, a different license is chosen, this file and the relevant
+package.json `license` fields will be updated together in a single, reviewable
+change. Until that change happens, treat the contents of this repository as
+proprietary source material with no granted usage rights.

@@ -1,0 +1,7 @@
+{
+  "name": "@maharudra-examples/demo-existing-fullstack-app",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Documentation-only example showing how create-agentic-ai-infra adds local context to an existing full-stack app while preserving user files.",
+  "license": "UNLICENSED"
+}

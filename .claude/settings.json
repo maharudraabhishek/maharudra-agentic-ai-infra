@@ -1,0 +1,102 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm.cmd typecheck)",
+      "Bash(pnpm.cmd build)",
+      "Bash(pnpm.cmd test)",
+      "Bash(pnpm.cmd lint)",
+      "Bash(pnpm.cmd install)",
+      "Bash(pnpm.cmd run ci)",
+      "Bash(pnpm.cmd run release:check)",
+      "Bash(pnpm.cmd -r list*)",
+      "Bash(pnpm.cmd --filter * run *)",
+      "Bash(pnpm.cmd --filter * run build)",
+      "Bash(pnpm.cmd --filter * run test)",
+      "Bash(pnpm.cmd --filter * run typecheck)",
+      "Bash(pnpm.cmd --filter * run lint)",
+      "Bash(node scripts/quota-check.mjs*)",
+      "Bash(node scripts/session-summary.mjs*)",
+      "Bash(node scripts/update-doc-timestamps.mjs*)",
+      "Bash(node scripts/subagent-routing.mjs*)",
+      "Bash(node scripts/subagent-routing-hook.mjs*)",
+      "Bash(node scripts/subagent-telemetry.mjs*)",
+      "Bash(node scripts/subagent-deviance-check.mjs*)",
+      "Bash(node scripts/subagent-deviance.mjs*)",
+      "Bash(node scripts/safe-agent-schema-lint.mjs*)"
+    ],
+    "deny": []
+  },
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          { "type": "command", "command": "node scripts/subagent-routing-hook.mjs", "timeout": 30 }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "",
+        "hooks": [
+          { "type": "command", "command": "node scripts/subagent-telemetry.mjs", "timeout": 10 }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          { "type": "command", "command": "node scripts/update-doc-timestamps.mjs" }
+        ]
+      },
+      {
+        "matcher": "Write|Edit|NotebookEdit|MultiEdit",
+        "hooks": [
+          { "type": "command", "command": "node scripts/subagent-telemetry.mjs", "timeout": 10 }
+        ]
+      }
+    ],
+    "PermissionRequest": [
+      {
+        "matcher": "",
+        "hooks": [
+          { "type": "command", "command": "node scripts/subagent-telemetry.mjs", "timeout": 10 }
+        ]
+      }
+    ],
+    "SubagentStart": [
+      {
+        "hooks": [
+          { "type": "command", "command": "node scripts/subagent-telemetry.mjs", "timeout": 10 }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          { "type": "command", "command": "node scripts/subagent-telemetry.mjs", "timeout": 10 }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          { "type": "command", "command": "node scripts/quota-check.mjs claude increment-and-check" }
+        ]
+      },
+      {
+        "matcher": "",
+        "hooks": [
+          { "type": "command", "command": "node scripts/session-summary.mjs" }
+        ]
+      },
+      {
+        "matcher": "",
+        "hooks": [
+          { "type": "command", "command": "node scripts/subagent-deviance-check.mjs", "timeout": 15 }
+        ]
+      }
+    ]
+  }
+}

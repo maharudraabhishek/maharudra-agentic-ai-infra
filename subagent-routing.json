@@ -1,0 +1,7 @@
+{
+  "mode": "auto",
+  "deviance_mode": "on",
+  "description": "Sub-agent routing + deviance check toggles. 'mode' (auto|manual) controls the director hook; 'deviance_mode' (on|off) controls D50 deviance detection and tool-event telemetry. Read by scripts/subagent-routing-hook.mjs, scripts/subagent-telemetry.mjs, and scripts/subagent-deviance-check.mjs.",
+  "flipWith": "node scripts/subagent-routing.mjs on|off  |  node scripts/subagent-deviance.mjs on|off",
+  "statusWith": "node scripts/subagent-routing.mjs status  |  node scripts/subagent-deviance.mjs status"
+}

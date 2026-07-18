@@ -1,0 +1,44 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build output and caches
+dist/
+build/
+coverage/
+.turbo/
+.cache/
+.next/
+.vite/
+*.tsbuildinfo
+
+# Local and private state
+.agentic-local/
+.mcp-local/
+.env
+.env.*
+.npmrc
+
+# Auto-generated session tracking (written by scripts/session-summary.mjs Stop hook)
+session-summary.md
+
+# Developer-only working files — not part of the published framework
+STATUS.md
+CHAT_CONTEXT.md
+ai-learning.md
+learning-images/
+docs/internal/
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Pack artifacts (release-readiness uses --dry-run, but guard against accidental real packs)
+*.tgz
+
+# OS and editor noise
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

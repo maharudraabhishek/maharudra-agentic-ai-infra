@@ -1,0 +1,102 @@
+# Release readiness (non-publishing)
+#
+# Manually triggered workflow that runs the full release-readiness gate without
+# ever publishing a package. This workflow is the single source of "is this
+# repo currently package-ready and release-ready?" — it must remain
+# workflow_dispatch only and must never call `npm publish` or `pnpm publish`,
+# even if a registry token is present in the environment.
+#
+# What it does:
+#   - Runs typecheck, build, test, and lint across the workspace.
+#   - Lists workspace dependencies at depth 1.
+#   - Performs a `pnpm pack --dry-run` on each private package to confirm the
+#     `files` allowlist and `exports` map are consistent with package metadata.
+#   - Confirms every package manifest still has `"private": true` and lacks
+#     `publishConfig`.
+#
+# Safety boundaries:
+#   - workflow_dispatch only — never auto-runs on push, PR, tag, or release.
+#   - Does not authenticate to npm; does not need an NPM_TOKEN secret.
+#   - Treats any future `private: false` flip as a failure so accidental
+#     publish-readiness regressions are caught here, not in production.
+name: release-readiness
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  release-readiness:
+    name: release-readiness checks (non-publishing)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.33.0
+          run_install: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies (frozen lockfile)
+        run: pnpm install --frozen-lockfile
+
+      - name: Workspace CI gate
+        run: pnpm run ci
+
+      - name: Workspace dependency listing
+        run: pnpm -r list --depth -1
+
+      - name: Dry-run pack for each framework package
+        run: |
+          set -euo pipefail
+          for pkg in \
+            @maharudra/agentic-ai-infra-core \
+            @maharudra/create-agentic-ai-infra \
+            @maharudra/agentic-ai-infra-runtime \
+            @maharudra/agentic-ai-infra-dashboard \
+            @maharudra/agentic-ai-infra-test-utils
+          do
+            echo "::group::pack dry-run for $pkg"
+            pnpm --filter "$pkg" pack --dry-run
+            echo "::endgroup::"
+          done
+
+      - name: Confirm every package is still private and lacks publishConfig
+        run: |
+          set -euo pipefail
+          node --input-type=module -e "
+            import fs from 'node:fs/promises';
+            import path from 'node:path';
+
+            const manifests = [
+              'packages/agentic-ai-infra-core/package.json',
+              'packages/create-agentic-ai-infra/package.json',
+              'packages/agentic-ai-infra-runtime/package.json',
+              'packages/agentic-ai-infra-dashboard/package.json',
+              'packages/agentic-ai-infra-test-utils/package.json'
+            ];
+
+            const failures = [];
+            for (const file of manifests) {
+              const json = JSON.parse(await fs.readFile(file, 'utf8'));
+              if (json.private !== true) failures.push(file + ': private must be true');
+              if (json.publishConfig !== undefined) failures.push(file + ': publishConfig must be unset');
+            }
+            if (failures.length > 0) {
+              console.error('Release-readiness check failed:\n' + failures.join('\n'));
+              process.exit(1);
+            }
+            console.log('All framework packages remain private and lack publishConfig.');
+          "

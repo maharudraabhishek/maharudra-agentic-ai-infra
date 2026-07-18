@@ -1,0 +1,7 @@
+{
+  "name": "@maharudra-examples/demo-remote-safe",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Documentation-only example showing the remote-safe MCP/API setup with strict local filesystem and shell boundaries.",
+  "license": "UNLICENSED"
+}

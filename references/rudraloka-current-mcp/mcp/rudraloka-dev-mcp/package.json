@@ -1,0 +1,31 @@
+{
+  "name": "rudraloka-dev-mcp",
+  "version": "1.0.0",
+  "description": "Secure local MCP server for Rudraloka AI-assisted development.",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "tsx src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint \"src/**/*.ts\" \"tests/**/*.ts\"",
+    "test": "vitest run",
+    "test:unit": "vitest run"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "latest",
+    "pg": "^8.20.0",
+    "typescript": "latest",
+    "zod": "latest"
+  },
+  "devDependencies": {
+    "@eslint/js": "latest",
+    "@types/node": "latest",
+    "@types/pg": "^8.20.0",
+    "eslint": "latest",
+    "tsx": "latest",
+    "typescript-eslint": "latest",
+    "vitest": "latest"
+  }
+}

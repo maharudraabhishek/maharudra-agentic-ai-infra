@@ -1,0 +1,37 @@
+{
+  "version": 1,
+  "name": "agent-runtime-fixtures",
+  "description": "Sample dataset for agent runtime eval. Real projects replace these.",
+  "items": [
+    {
+      "id": "ar-1-security-review",
+      "question": "Review the security posture of the new tool",
+      "expectedChunks": ["tools/security-policy"],
+      "expectedAnswer": "Security review completed.",
+      "expectedToolCalls": ["agentic.retrieval.search"],
+      "tags": ["security"],
+      "difficulty": "medium",
+      "matchMode": "substring"
+    },
+    {
+      "id": "ar-2-doc-pass",
+      "question": "Document the eval system architecture",
+      "expectedChunks": ["docs/eval-architecture"],
+      "expectedAnswer": "Eval architecture documented.",
+      "expectedToolCalls": ["agentic.context.build"],
+      "tags": ["documentation"],
+      "difficulty": "easy",
+      "matchMode": "substring"
+    },
+    {
+      "id": "ar-3-architecture-review",
+      "question": "Architectural review of the executor refactor",
+      "expectedChunks": ["agents/executor-options"],
+      "expectedAnswer": "Executors now use options object construction.",
+      "expectedToolCalls": ["agentic.retrieval.search"],
+      "tags": ["architecture"],
+      "difficulty": "medium",
+      "matchMode": "substring"
+    }
+  ]
+}

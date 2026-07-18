@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir /b)",
+      "Bash(findstr /V \"node_modules\")",
+      "Bash(pnpm.cmd ci *)",
+      "PowerShell($lines = \\(Get-Content \"C:\\\\Users\\\\abhi1\\\\react\\\\maharudra-agentic-ai-infra\\\\kb.md\"\\).Count; Write-Output \"Total lines: $lines\")",
+      "Bash(pnpm.cmd *)",
+      "WebFetch(domain:docs.claude.com)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:developers.openai.com)",
+      "Bash(node scripts/subagent-routing.mjs status)",
+      "Bash(node scripts/subagent-routing.mjs get-mode)",
+      "Bash(node scripts/subagent-routing-hook.mjs)",
+      "Bash(node scripts/subagent-routing.mjs off)",
+      "Bash(echo \"\\(exit=$?\\)\")",
+      "Bash(node scripts/subagent-routing.mjs on)",
+      "Bash(findstr *)",
+      "Bash(node -e \"let d=''; process.stdin.on\\('data',c=>d+=c\\); process.stdin.on\\('end',\\(\\)=>{ const j=JSON.parse\\(d\\); const ok = j.hookSpecificOutput && j.hookSpecificOutput.hookEventName === 'UserPromptSubmit' && typeof j.hookSpecificOutput.additionalContext === 'string'; console.log\\(ok ? 'JSON shape OK, additionalContext length=' + j.hookSpecificOutput.additionalContext.length + ' chars' : 'INVALID JSON SHAPE'\\); }\\);\")",
+      "Bash(node -e ' *)",
+      "PowerShell($out = & node scripts/subagent-routing-hook.mjs; $parsed = $out | ConvertFrom-Json; $ctx = $parsed.hookSpecificOutput.additionalContext; \"additionalContext chars: $\\($ctx.Length\\)\"; \"envelope chars: $\\($out.Length\\)\"; \"rough tokens \\(chars/4\\): $\\([math]::Round\\($ctx.Length/4\\)\\)\"; \"word count: $\\(\\($ctx -split '\\\\s+' | Where-Object {$_}\\).Count\\)\")",
+      "Bash(node -e \"let d=''; process.stdin.on\\('data',c=>d+=c\\); process.stdin.on\\('end',\\(\\)=>{ const j=JSON.parse\\(d\\); const ac=j.hookSpecificOutput.additionalContext; console.log\\('event:', j.hookSpecificOutput.hookEventName\\); console.log\\('addCtx chars:', ac.length\\); console.log\\('addCtx words:', ac.trim\\(\\).split\\(/\\\\s+/\\).length\\); console.log\\('approx tokens \\(chars/4\\):', Math.round\\(ac.length/4\\)\\); }\\);\")",
+      "Bash(node -e \"let d=''; process.stdin.on\\('data',c=>d+=c\\); process.stdin.on\\('end',\\(\\)=>{const j=JSON.parse\\(d\\); console.log\\('chars:', j.hookSpecificOutput.additionalContext.length\\); console.log\\('first 60:', j.hookSpecificOutput.additionalContext.slice\\(0,60\\)\\);}\\);\")",
+      "Bash(node -e \"let d=''; process.stdin.on\\('data',c=>d+=c\\); process.stdin.on\\('end',\\(\\)=>{const j=JSON.parse\\(d\\); console.log\\('chars:', j.hookSpecificOutput.additionalContext.length\\); console.log\\('content:', j.hookSpecificOutput.additionalContext\\);}\\);\")",
+      "Bash(powershell *)",
+      "WebSearch",
+      "WebFetch(domain:anthropic.com)",
+      "Bash(node --input-type=module)",
+      "Bash(echo \"EXIT CODE: $?\")"
+    ]
+  }
+}

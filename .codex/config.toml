@@ -1,0 +1,131 @@
+# .codex/config.toml
+#
+# Codex CLI project-scoped configuration for the
+# maharudra-agentic-ai-infra repository.
+#
+# Codex loads this file automatically when started from the project root
+# and overlays it on top of ~/.codex/config.toml. It mirrors the relevant
+# pieces of .claude/settings.json so the sub-agent auto-routing toggle
+# works identically on both stacks.
+
+# ---------------------------------------------------------------------------
+# UserPromptSubmit hook
+# ---------------------------------------------------------------------------
+#
+# Codex CLI fires the UserPromptSubmit hook on every prompt before the
+# model sees it. The hook is a Node script that:
+#   1. Reads `subagent-routing.json` at the project root.
+#   2. If mode == "auto", prints a JSON envelope whose
+#      hookSpecificOutput.additionalContext field tells Codex to spawn the
+#      director sub-agent (.codex/agents/director.toml) for this turn.
+#   3. If mode == "manual" or the toggle file is missing/malformed,
+#      prints nothing and the prompt is processed normally.
+#
+# Same script also wired into .claude/settings.json — both stacks share
+# the exact same JSON output shape, so a single script handles both.
+#
+# The hook always exits 0. It must never block prompts under any condition.
+
+[[hooks.UserPromptSubmit]]
+matcher = ""
+
+[[hooks.UserPromptSubmit.hooks]]
+type = "command"
+command = "node scripts/subagent-routing-hook.mjs"
+timeout = 30
+statusMessage = "Sub-agent auto-routing"
+
+# ---------------------------------------------------------------------------
+# SubagentStart telemetry
+# ---------------------------------------------------------------------------
+#
+# Appends one JSONL record to .agentic-local/subagent-routing-log.jsonl.
+# The script also detects when a HANDBACK names a sub-agent outside the
+# 15-roster and emits a nearest-name suggestion to stderr. Always exits 0.
+
+[[hooks.SubagentStart]]
+matcher = ""
+
+[[hooks.SubagentStart.hooks]]
+type = "command"
+command = "node scripts/subagent-telemetry.mjs"
+timeout = 10
+statusMessage = "Sub-agent telemetry"
+
+# ---------------------------------------------------------------------------
+# SubagentStop telemetry
+# ---------------------------------------------------------------------------
+
+[[hooks.SubagentStop]]
+matcher = ""
+
+[[hooks.SubagentStop.hooks]]
+type = "command"
+command = "node scripts/subagent-telemetry.mjs"
+timeout = 10
+statusMessage = "Sub-agent telemetry"
+
+# ---------------------------------------------------------------------------
+# Stop hook policy
+# ---------------------------------------------------------------------------
+#
+# No Stop hook is registered for Codex. Stop fires at normal turn boundaries,
+# which makes long-running multi-step work look like it is being interrupted.
+# Run `node scripts/subagent-deviance-check.mjs --dry-run` manually when a
+# deviance audit is needed.
+
+# ---------------------------------------------------------------------------
+# PreToolUse telemetry
+# ---------------------------------------------------------------------------
+#
+# Captures tool-event records for deviance signals. The telemetry script
+# honors subagent-routing.json deviance_mode; when "off", tool-event records
+# are skipped while SubagentStart/SubagentStop continue.
+
+[[hooks.PreToolUse]]
+matcher = ""
+
+[[hooks.PreToolUse.hooks]]
+type = "command"
+command = "node scripts/subagent-telemetry.mjs"
+timeout = 10
+statusMessage = "Sub-agent telemetry"
+
+# ---------------------------------------------------------------------------
+# PostToolUse telemetry
+# ---------------------------------------------------------------------------
+#
+# Matcher belongs to the event block, not the command hook block.
+
+[[hooks.PostToolUse]]
+matcher = "Write|Edit|NotebookEdit|MultiEdit"
+
+[[hooks.PostToolUse.hooks]]
+type = "command"
+command = "node scripts/subagent-telemetry.mjs"
+timeout = 10
+statusMessage = "Sub-agent telemetry"
+
+# ---------------------------------------------------------------------------
+# PermissionRequest telemetry
+# ---------------------------------------------------------------------------
+
+[[hooks.PermissionRequest]]
+matcher = ""
+
+[[hooks.PermissionRequest.hooks]]
+type = "command"
+command = "node scripts/subagent-telemetry.mjs"
+timeout = 10
+statusMessage = "Sub-agent telemetry"
+
+# ---------------------------------------------------------------------------
+# Sub-agent runtime caps — project-scoped overrides
+# ---------------------------------------------------------------------------
+#
+# Defaults from the Codex docs are max_threads=6, max_depth=1. We raise the
+# depth to 2 so the director at depth 1 can spawn specialists at depth 2 from
+# the .codex/agents/ roster.
+
+[agents]
+max_depth = 2

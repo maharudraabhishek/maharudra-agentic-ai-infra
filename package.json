@@ -1,0 +1,36 @@
+{
+  "name": "maharudra-agentic-ai-infra",
+  "version": "0.1.0",
+  "description": "Reusable local-first and remote-ready agentic AI infrastructure framework.",
+  "private": true,
+  "type": "module",
+  "license": "UNLICENSED",
+  "packageManager": "pnpm@10.33.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "pnpm -r --if-present build",
+    "typecheck": "pnpm -r --if-present typecheck",
+    "test": "pnpm -r --if-present test",
+    "lint": "pnpm -r --if-present lint",
+    "generated:smoke": "pnpm --filter @maharudra/create-agentic-ai-infra run test -- generated-project-smoke",
+    "release:check": "pnpm run ci && pnpm -r list --depth -1",
+    "ci": "pnpm build && pnpm typecheck && pnpm test && pnpm lint",
+    "verify:postgres": "tsx scripts/verify-postgres.ts"
+  },
+  "keywords": [
+    "agentic-ai",
+    "mcp",
+    "typescript",
+    "pnpm",
+    "framework"
+  ],
+  "author": "",
+  "devDependencies": {
+    "@types/node": "^24.10.0",
+    "tsx": "^4.19.0",
+    "typescript": "6.0.3",
+    "vitest": "4.1.6"
+  }
+}

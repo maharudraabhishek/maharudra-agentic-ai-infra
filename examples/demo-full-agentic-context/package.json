@@ -1,0 +1,7 @@
+{
+  "name": "@maharudra-examples/demo-full-agentic-context",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Documentation-only example showing the full local context setup with token-efficient multi-agent mode, hybrid retrieval, optional dashboard, and user-started Docker files.",
+  "license": "UNLICENSED"
+}

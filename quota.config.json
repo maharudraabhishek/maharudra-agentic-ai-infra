@@ -1,0 +1,87 @@
+{
+  "_readme": [
+    "AI provider quota configuration.",
+    "Set 'plan' to your actual subscription tier. The script resolves budget and",
+    "resetCycle from plan defaults. Override 'budget' explicitly to customise.",
+    "",
+    "Claude resets DAILY  (rolling ~5 h window — tracked here per UTC day).",
+    "Codex  resets WEEKLY (Monday UTC — tracked here per ISO week).",
+    "",
+    "These are different reset cycles because the two providers work differently.",
+    "Do not try to track both on the same cycle."
+  ],
+
+  "_hookCost": [
+    "The Claude Code Stop hook that calls quota-check.mjs is a LOCAL shell process.",
+    "It reads one JSON file, writes one JSON file, and prints conditionally.",
+    "ZERO API calls. ZERO network traffic. ZERO tokens consumed.",
+    "Cost: a few milliseconds of disk I/O after each response."
+  ],
+
+  "_knownLimits": {
+    "_note": "Approximate published values. Verify against your account dashboard.",
+    "claude": {
+      "free": {
+        "approxDailyMessages": 20,
+        "resetWindow": "rolling ~8 hours",
+        "cost": "$0/month",
+        "builtInWarning": "Only after limit is hit — no proactive warning"
+      },
+      "pro": {
+        "approxDailyMessages": 100,
+        "resetWindow": "rolling ~5 hours",
+        "cost": "$20/month",
+        "builtInWarning": "Only after limit is hit — no proactive warning"
+      },
+      "max": {
+        "approxDailyMessages": 500,
+        "resetWindow": "rolling ~5 hours",
+        "cost": "$100/month",
+        "builtInWarning": "Only after limit is hit — no proactive warning"
+      },
+      "api": {
+        "limit": "Rate-limited (TPM/RPM per minute). No daily message cap.",
+        "billing": "Pay-per-token",
+        "builtInWarning": "None — you see the bill, not a message count"
+      }
+    },
+    "codex": {
+      "free": {
+        "weeklyFastRequests": 5,
+        "slowRequests": "unlimited (slower model)",
+        "resetDay": "Monday UTC",
+        "cost": "$0/month",
+        "builtInWarning": "Shows count in UI. Switches to slow mode when exhausted."
+      },
+      "pro": {
+        "weeklyFastRequests": 10,
+        "slowRequests": "unlimited (slower model)",
+        "resetDay": "Monday UTC",
+        "cost": "$20/month",
+        "builtInWarning": "Shows count in UI. Switches to slow mode when exhausted."
+      },
+      "api": {
+        "limit": "Rate-limited (RPM/TPM). No weekly fast-request cap.",
+        "billing": "Pay-per-token",
+        "builtInWarning": "None — you see the bill, not a request count"
+      }
+    }
+  },
+
+  "warningThresholdPercent": 85,
+
+  "providers": {
+    "claude": {
+      "plan": "pro",
+      "_planOptions": "free | pro | max | api",
+      "_budgetOverride": "Optional. Set 'budget' to override the plan default (e.g. budget: 80).",
+      "_note": "resetCycle is always 'daily' for Claude — do not change this."
+    },
+    "codex": {
+      "plan": "pro",
+      "_planOptions": "free | pro | api",
+      "_budgetOverride": "Optional. Set 'budget' to override the plan default (e.g. budget: 8).",
+      "_note": "resetCycle is always 'weekly' for Codex — do not change this."
+    }
+  }
+}

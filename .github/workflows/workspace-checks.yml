@@ -1,0 +1,64 @@
+# Workspace checks
+#
+# Runs on every push and pull request to verify that the full pnpm workspace
+# still typechecks, builds, tests, and lints. This is the canonical CI gate for
+# the framework — every other workflow in this repo is a focused subset.
+#
+# Safety boundaries:
+#   - Workflow never publishes packages (publishing only happens via
+#     release-readiness.yml, which is workflow_dispatch only and also
+#     non-publishing).
+#   - Workflow does not start Docker, run migrations, or touch any
+#     remote/production system.
+#   - Generated smoke tests run inside the create package's test suite and
+#     write only to per-test temp directories.
+name: workspace-checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  workspace-ci:
+    name: typecheck / build / test / lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.33.0
+          run_install: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies (frozen lockfile)
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Build
+        run: pnpm build
+
+      - name: Test
+        run: pnpm test
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Workspace dependency listing
+        run: pnpm -r list --depth -1

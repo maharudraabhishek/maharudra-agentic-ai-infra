@@ -1,0 +1,30 @@
+{
+  "name": "@maharudra/agentic-ai-infra-examples",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Working examples for MahaRudra Agentic AI Infra packages.",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "build": "tsc",
+    "start:vectorless": "node dist/vectorless-local/index.js",
+    "start:local-context": "tsx src/local-context/index.ts",
+    "start:hybrid-rag": "tsx src/hybrid-rag/index.ts",
+    "start:pdf-rag": "tsx src/pdf-rag/index.ts"
+  },
+  "dependencies": {
+    "@maharudra/agentic-ai-infra-core": "workspace:*",
+    "@maharudra/agentic-ai-infra-runtime": "workspace:*",
+    "@maharudra/agentic-ai-infra-pdf": "workspace:*",
+    "pdf-parse": "^1.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.0",
+    "@types/pdf-parse": "^1.1.4",
+    "pdf-lib": "^1.17.1",
+    "tsx": "^4.19.0"
+  }
+}

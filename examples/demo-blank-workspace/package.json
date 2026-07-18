@@ -1,0 +1,7 @@
+{
+  "name": "@maharudra-examples/demo-blank-workspace",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Documentation-only example showing how create-agentic-ai-infra scaffolds a blank workspace with the minimal profile.",
+  "license": "UNLICENSED"
+}

@@ -1,0 +1,31 @@
+services:
+  rudraloka-local-pgvector:
+    image: pgvector/pgvector:pg16
+    container_name: rudraloka-local-pgvector
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: rudraloka_local_ai
+      POSTGRES_USER: rudraloka_local
+      # Local-only development password.
+      # This is intentionally kept in Compose for the Phase 2 dev runtime so
+      # no .env file or secret-management path is introduced yet. Do not reuse
+      # this value in production or any shared environment.
+      POSTGRES_PASSWORD: rudraloka_local_dev_password
+    ports:
+      - "5433:5432"
+    volumes:
+      - rudraloka-local-pgvector-data:/var/lib/postgresql/data
+      - ./init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U rudraloka_local -d rudraloka_local_ai"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    # Phase 2 only creates the local database runtime. Do not add app
+    # services, RAG schemas, embeddings, HNSW/IVFFlat indexes, or MCP
+    # connection behavior in this Compose file.
+
+volumes:
+  rudraloka-local-pgvector-data:
+    name: rudraloka-local-pgvector-data

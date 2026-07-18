@@ -1,0 +1,36 @@
+name: Reusable Generated Project Checks
+
+on:
+  workflow_call:
+
+jobs:
+  generated-project-checks:
+    name: Generated output safety checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.33.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck generator and test utilities
+        run: pnpm --filter @maharudra/create-agentic-ai-infra --filter @maharudra/agentic-ai-infra-test-utils typecheck
+
+      - name: Build generator and test utilities
+        run: pnpm --filter @maharudra/create-agentic-ai-infra --filter @maharudra/agentic-ai-infra-test-utils build
+
+      - name: Run generated smoke tests
+        run: pnpm generated:smoke

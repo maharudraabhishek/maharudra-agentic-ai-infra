@@ -1,0 +1,37 @@
+{
+  "compilerOptions": {
+    // Use modern JavaScript output supported by current Node.js versions.
+    "target": "ES2022",
+
+    // Use Node's modern ES module resolution behavior.
+    // This matches our package.json setting: "type": "module".
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+
+    // This tells TypeScript that all source files live inside src/.
+    // Without this, TypeScript may infer the root directory automatically,
+    // but newer TypeScript versions warn when outDir is set without rootDir.
+    "rootDir": "src",
+
+    // This tells TypeScript to place compiled JavaScript files inside dist/.
+    // With rootDir = "src", src/server.ts becomes dist/server.js.
+    "outDir": "dist",
+
+    // Enables strict type-checking for safer code.
+    "strict": true,
+
+    // Load Node.js globals and built-in module declarations such as
+    // process, node:path, and node:fs/promises.
+    "types": ["node"],
+
+    // Improves compatibility when importing CommonJS-style packages.
+    "esModuleInterop": true,
+
+    // Skips type-checking library declaration files for faster builds.
+    "skipLibCheck": true
+  },
+
+  // Only compile files inside src/.
+  // This keeps docs, dist, node_modules, and config files out of the build.
+  "include": ["src"]
+}

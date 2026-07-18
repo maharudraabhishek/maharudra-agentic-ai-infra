@@ -1,0 +1,37 @@
+{
+  "version": 1,
+  "name": "retrieval-quality-fixtures",
+  "description": "Sample dataset for retrieval quality eval. Real projects replace these with domain-specific items.",
+  "items": [
+    {
+      "id": "rq-1-auth-overview",
+      "question": "How does session authentication work in this codebase?",
+      "expectedChunks": ["auth/session-overview", "auth/session-lifecycle"],
+      "expectedAnswer": "Sessions are created via resumeOrCreateSession and stored by the SessionManager.",
+      "expectedToolCalls": ["agentic.retrieval.search", "agentic.context.build"],
+      "tags": ["security", "auth"],
+      "difficulty": "easy",
+      "matchMode": "substring"
+    },
+    {
+      "id": "rq-2-storage-providers",
+      "question": "What storage providers are supported?",
+      "expectedChunks": ["storage/providers/types", "storage/providers/memory", "storage/providers/postgres"],
+      "expectedAnswer": "The framework supports memory and postgres storage providers via the StorageProvider interface.",
+      "expectedToolCalls": ["agentic.retrieval.search"],
+      "tags": ["storage", "architecture"],
+      "difficulty": "medium",
+      "matchMode": "substring"
+    },
+    {
+      "id": "rq-3-pgvector-migration",
+      "question": "Which migration enables pgvector and at what dimension?",
+      "expectedChunks": ["migrations/005-pgvector-1024"],
+      "expectedAnswer": "Migration 005 ALTERs the embedding column to vector(1024).",
+      "expectedToolCalls": ["agentic.retrieval.search"],
+      "tags": ["storage", "migrations"],
+      "difficulty": "hard",
+      "matchMode": "exact"
+    }
+  ]
+}
